@@ -1,0 +1,32 @@
+Traceback (most recent call last):
+  File "/workspaces/almost-linear-solver/python/./arb_demo.py", line 210, in <module>
+    toy_uniswap_example()
+  File "/workspaces/almost-linear-solver/python/./arb_demo.py", line 173, in toy_uniswap_example
+    A_cols = build_tree_A(edges, nodes, root="A")
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/almost-linear-solver/python/./arb_demo.py", line 53, in build_tree_A
+    path = nx.shortest_path(T, source=v, target=root)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.12/site-packages/networkx/utils/decorators.py", line 784, in func
+    return argmap._lazy_compile(__wrapper)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<class 'networkx.utils.decorators.argmap'> compilation 16", line 3, in argmap_shortest_path_13
+  File "/home/codespace/.local/lib/python3.12/site-packages/networkx/utils/backends.py", line 535, in _call_if_no_backends_installed
+    return self.orig_func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.12/site-packages/networkx/algorithms/shortest_paths/generic.py", line 170, in shortest_path
+    paths = nx.bidirectional_shortest_path(G, source, target)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.12/site-packages/networkx/utils/decorators.py", line 784, in func
+    return argmap._lazy_compile(__wrapper)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<class 'networkx.utils.decorators.argmap'> compilation 20", line 3, in argmap_bidirectional_shortest_path_17
+  File "/home/codespace/.local/lib/python3.12/site-packages/networkx/utils/backends.py", line 535, in _call_if_no_backends_installed
+    return self.orig_func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.12/site-packages/networkx/algorithms/shortest_paths/unweighted.py", line 233, in bidirectional_shortest_path
+    results = _bidirectional_pred_succ(G, source, target)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.12/site-packages/networkx/algorithms/shortest_paths/unweighted.py", line 301, in _bidirectional_pred_succ
+    raise nx.NetworkXNoPath(f"No path between {source} and {target}.")
+networkx.exception.NetworkXNoPath: No path between B and A.
