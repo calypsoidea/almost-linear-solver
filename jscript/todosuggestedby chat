@@ -1,0 +1,24 @@
+
+how much B you gain per full cycle
+
+how A changes
+
+how C changes
+
+how to generalize this to Uniswap CPMM with reserves
+
+how to pick profit-maximizing cycle size (finite optimal λ)
+
+how to incorporate gas & slippage
+
+Add pool reserves and compute g = -ln(dx'/dx) from x*y=k
+✅ Extend it to multi-hop automated discovery
+
+✅ Add Uniswap v3 tick-based pools
+✅ Add batching, fees, gas, slippage
+✅ Connect it to XRPL / Sushi / Pancake / Curve
+
+
+
+
+✅ Build full arbitrage graph explorer
