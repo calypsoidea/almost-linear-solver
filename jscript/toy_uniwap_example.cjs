@@ -199,12 +199,13 @@ function decomposeCirculation(idToEdge, c, tol = 1e-12) {
 
 // ---------------- toy Uniswap example ----------------
 
-function toyUniswapExample() {
+/* function toyUniswapExample() {
     const nodes = ["A", "B", "C"];
     const edges = [["A", "B"], ["B", "C"], ["C", "A"]];
     const { edgeToId, idToEdge } = buildEdgeIndex(edges);
 
     const rates = { "A,B":0.99, "B,C":1.02, "C,A":1.01 };
+
     const m = edges.length;
     const g = new Array(m).fill(0);
     edges.forEach(([u,v], eid) => { const r = rates[u + "," + v]; g[eid] = -Math.log(r); });
@@ -212,7 +213,9 @@ function toyUniswapExample() {
     const L = new Array(m).fill(1);
 
     // build A and apply
-    const A_cols = buildTreeA(edges, nodes, "A");
+    // const A_cols = buildTreeA(edges, nodes, "A"); //  [ [ 0, -1 ], [ 2, -1 ], [ 1, -1 ] ]
+     const A_cols = buildTreeA(edges, nodes, "B"); // cycle: [ [ 0, -1 ], [ 2, -1 ], [ 1, -1 ] ]
+    //const A_cols = buildTreeA(edges, nodes, "C"); //  cycle: [ [ 0, 1 ], [ 1, 1 ], [ 2, 1 ] ]
     const { d, nodes: nodesOut, nodeToId } = divergenceFromEdgeVector(idToEdge, g);
     const f = applyACols(A_cols, d, nodeToId, m);
     const c = g.map((gi, i) => gi - f[i]);
@@ -233,6 +236,56 @@ function toyUniswapExample() {
     });
 
     // print
+    log("Edges (eid,edge):", idToEdge);
+    log("g = -ln(rate):", g);
+    log("d = B^T g:");
+    nodesOut.forEach(n => log(" ", n, d[nodeToId[n]]));
+    log("f = A d:", f);
+    log("c = g - f:", c);
+    log("B^T c (should be near zero):", check.d);
+    log("Cycles:");
+    if (evaluated.length === 0) log("  (no cycles found)");
+    else evaluated.forEach(ev => {
+        log(" amt:", ev.amt.toFixed(9), " num:", ev.num.toFixed(9),
+            " den:", ev.den.toFixed(9), " ratio:", ev.ratio.toFixed(9),
+            " cycle:", ev.cyc_eids);
+    });
+}*/
+
+function toyUniswapExample() {
+    const nodes = ["A", "B", "C"];
+    const edges = [["A", "B"], ["B", "C"], ["C", "A"]];
+    const { edgeToId, idToEdge } = buildEdgeIndex(edges);
+
+    const rates = { "A,B":0.99, "B,C":1.02, "C,A":1.01 };
+    const m = edges.length;
+    const g = new Array(m).fill(0);
+    edges.forEach(([u,v], eid) => { const r = rates[u + "," + v]; g[eid] = -Math.log(r); });
+
+    const L = new Array(m).fill(1);
+
+    // Build A and apply
+    const A_cols = buildTreeA(edges, nodes, "B");  // Root is 'B' now
+    const { d, nodes: nodesOut, nodeToId } = divergenceFromEdgeVector(idToEdge, g);
+    const f = applyACols(A_cols, d, nodeToId, m);
+    const c = g.map((gi, i) => gi - f[i]);
+
+    // Verify divergence of c (should be near zero)
+    const check = divergenceFromEdgeVector_generic(idToEdge, c);
+
+    // Decompose cycles
+    const cycles = decomposeCirculation(idToEdge, c);
+
+    // Evaluate cycles
+    const evaluated = cycles.map(({cyc_eids, amt}) => {
+        const delta = new Array(m).fill(0);
+        cyc_eids.forEach(([eid, sign]) => delta[eid] += sign * amt);
+        const num = g.reduce((s,gi,i) => s + gi*delta[i], 0);
+        const den = delta.reduce((s,di,i) => s + Math.abs(L[i]*di), 0);
+        return {cyc_eids, amt, num, den, ratio: den===0?Infinity : num/den};
+    });
+
+    // Print
     log("Edges (eid,edge):", idToEdge);
     log("g = -ln(rate):", g);
     log("d = B^T g:");

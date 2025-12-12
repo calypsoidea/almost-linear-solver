@@ -34,7 +34,7 @@ def build_tree_A(edges, nodes, root="A"):
 
     G = nx.Graph()                    # Undirected graph ensures connectivity
     G.add_nodes_from(nodes)
-    for u,v,_ in edges:
+    for u,v in edges:
         G.add_edge(u,v)
 
     # Ensure graph fully connected
