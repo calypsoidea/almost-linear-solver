@@ -1,6 +1,7 @@
 
 // dex_sim_600pools.cjs
-import { performance } from "perf_hooks";
+// import { performance } from "perf_hooks";
+const { performance } = require('perf_hooks');
 
 function log(...args) { console.log(...args); }
 
@@ -12,35 +13,133 @@ function buildEdgeIndex(edges) {
     return { edgeToId, idToEdge };
 }
 
-// interpretCycle from your code
-function interpretCycle(edges, cycle, rateMap) {
-    if (!cycle || cycle.length === 0) throw new Error("Cycle empty");
-    const directed = cycle.map(([eid, sign]) => {
-        const [u, v] = edges[eid];
-        return sign === 1
-            ? { poolId: eid, from: u, to: v, rate: rateMap[u + "," + v] }
-            : { poolId: eid, from: v, to: u, rate: 1 / rateMap[u + "," + v] };
-    });
+function extractAllCycles(edges, c, eps = 1e-12) {
+    const adj = new Map();
 
-    const used = new Array(directed.length).fill(false);
-    const ordered = [directed[0]]; used[0] = true;
-
-    for (let k = 1; k < directed.length; k++) {
-        const last = ordered[ordered.length-1];
-        let found = false;
-        for (let i = 0; i < directed.length; i++) {
-            if (used[i]) continue;
-            if (directed[i].from === last.to) { ordered.push(directed[i]); used[i] = true; found = true; break; }
-        }
-        if (!found) throw new Error("Cycle direction mismatch");
+    function addEdge(u, v, eid, amt) {
+        if (!adj.has(u)) adj.set(u, []);
+        adj.get(u).push({ to: v, eid, amt });
     }
 
-    if (ordered[ordered.length-1].to !== ordered[0].from) throw new Error("Cycle not closed");
+    for (let eid = 0; eid < edges.length; eid++) {
+        const v = c[eid];
+        if (Math.abs(v) < eps) continue;
 
-    let multiplier = 1;
-    for (const t of ordered) multiplier *= t.rate;
+        const [u, w] = edges[eid];
+        if (v > 0) addEdge(u, w, eid, v);
+        else addEdge(w, u, eid, -v);
+    }
 
-    return { startToken: ordered[0].from, endToken: ordered[ordered.length-1].to, orderedTrades: ordered, multiplier };
+    const cycles = [];
+
+    while (true) {
+        let start = null;
+        for (const [u, outs] of adj.entries()) {
+            if (outs.length > 0) { start = u; break; }
+        }
+        if (!start) break;
+
+        const stack = [];
+        const seen = new Map();
+        let u = start;
+
+        while (true) {
+            if (seen.has(u)) {
+                const idx = seen.get(u);
+                const cyc = stack.slice(idx);
+
+                let minAmt = Infinity;
+                for (const e of cyc) minAmt = Math.min(minAmt, e.amt);
+
+                cycles.push({
+                    cycle: cyc.map(e => [e.eid, +1]),
+                    amt: minAmt
+                });
+
+                for (const e of cyc) e.amt -= minAmt;
+                break;
+            }
+
+            seen.set(u, stack.length);
+
+            const outs = adj.get(u);
+            if (!outs || outs.length === 0) break;
+
+            // Always pick the last *still positive* edge
+            while (outs.length && outs[outs.length - 1].amt <= eps) {
+                outs.pop();
+            }
+            if (!outs.length) break;
+
+            const e = outs[outs.length - 1];
+            stack.push(e);
+            u = e.to;
+        }
+
+        // Clean residual graph
+        for (const [u, outs] of adj.entries()) {
+            adj.set(u, outs.filter(e => e.amt > eps));
+        }
+    }
+
+    return cycles;
+}
+
+
+
+// interpretCycle from your code
+/*function interpretCycle(idToEdge, cycle, rateMap) {
+    return cycle.map(([eid, sign]) => {
+        const { u, v } = idToEdge[eid];
+
+        // Prefer natural direction
+        if (rateMap[u + "," + v] !== undefined) {
+            return {
+                poolId: eid,
+                from: sign > 0 ? u : v,
+                to:   sign > 0 ? v : u,
+                rate: rateMap[u + "," + v]
+            };
+        }
+
+        // Otherwise flip
+        if (rateMap[v + "," + u] !== undefined) {
+            return {
+                poolId: eid,
+                from: sign > 0 ? v : u,
+                to:   sign > 0 ? u : v,
+                rate: rateMap[v + "," + u]
+            };
+        }
+
+        throw new Error(`Missing rate for pool ${u}<->${v}`);
+    });
+}*/
+
+function interpretCycle(idToEdge, cycle, rateMap) {
+    return cycle.map(([eid, sign]) => {
+        const [u, v] = idToEdge[eid];   // ✅ FIXED
+
+        if (rateMap[u + "," + v] !== undefined) {
+            return {
+                poolId: eid,
+                from: sign > 0 ? u : v,
+                to:   sign > 0 ? v : u,
+                rate: rateMap[u + "," + v]
+            };
+        }
+
+        if (rateMap[v + "," + u] !== undefined) {
+            return {
+                poolId: eid,
+                from: sign > 0 ? v : u,
+                to:   sign > 0 ? u : v,
+                rate: rateMap[v + "," + u]
+            };
+        }
+
+        throw new Error(`Missing rate for pool ${u}<->${v}`);
+    });
 }
 
 // ---------------- Root-Independent Projection ----------------
@@ -141,14 +240,25 @@ function runSimulation(){
     console.log("Projected to cycle space in", (t2-t1).toFixed(2),"ms");
 
     // Simple cycle extraction: take non-zero edges as one cycle
-    const cycle=[];
-    c.forEach((v,eid)=>{if(Math.abs(v)>1e-12) cycle.push([eid,v>0?1:-1]);});
-    if(cycle.length===0) { console.log("No cycle found"); return; }
+    //const cycle=[];
+    //c.forEach((v,eid)=>{if(Math.abs(v)>1e-12) cycle.push([eid,v>0?1:-1]);});
+
+    const cycles = extractAllCycles(idToEdge, c);
+
+    if (cycles.length === 0) {
+        console.log("No cycles found");
+        return;
+    }
+
     const t3=performance.now();
-    const result=interpretCycle(idToEdge,cycle,rateMap);
+    for (const { cycle, amt } of cycles) {
+        const result = interpretCycle(idToEdge, cycle, rateMap);
+        //console.log(result);
+        //console.log("Cycle multiplier:", result.multiplier.toFixed(6));
+    }
+
     const t4=performance.now();
-    console.log("Interpreted one cycle in", (t4-t3).toFixed(2),"ms");
-    console.log("Cycle multiplier:", result.multiplier.toFixed(6));
+    console.log("Interpreted cycles in", (t4-t3).toFixed(2),"ms");
 }
 
 runSimulation();

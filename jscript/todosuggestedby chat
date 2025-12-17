@@ -112,3 +112,75 @@ If you want, I can extend this to detect multiple cycles automatically, evaluate
 
 ask chat about the timings among versions
 
+Rank extracted cycles by multiplier
+
+Enforce max hop count (≤6)
+
+Add reserve-aware slippage simulation
+
+Incrementally update on each block
+
+Turn this into a Flashbots-ready engine
+
+Fix direction/sign handling only
+2️⃣ Make interpretCycle robust
+3️⃣ Add profitability + slippage
+4️⃣ Incremental per-block update
+5️⃣ Flashbots execution layer
+
+I can inject controlled arbitrage seeds.
+
+Order trades correctly + close the cycle
+2️⃣ Compute multiplier & profit
+3️⃣ Enforce max hops (≤6)
+4️⃣ Add reserve-aware slippage
+5️⃣ Incremental per-block updates
+
+You have NOT yet:
+
+sorted the edges into execution order
+
+verified closure (start token == end token)
+
+computed multiplier
+
+That is the next stage, not a bug.
+
+Execution ordering	❌ Next
+Profit evaluation	❌ Next
+Slippage simulation	❌ Later
+
+🔜 Next logical steps
+
+Reserve-aware slippage
+
+effectiveRate = amountOut(amountIn, reserveIn, reserveOut)
+
+
+Optimal input sizing
+
+maximize: amountIn × (multiplier(amountIn) − 1)
+
+
+Incremental block updates
+
+Keep graph
+
+Update only touched pools
+
+Flashbots-ready execution
+
+Encode swaps
+
+Atomic bundle
+
+Simulate → submit
+
+If you want, next I can:
+
+Add constant-product slippage math
+
+Turn this into a single-cycle optimizer
+
+Show how this maps 1:1 into a Flashbots bundle
+
