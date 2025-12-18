@@ -184,3 +184,31 @@ Turn this into a single-cycle optimizer
 
 Show how this maps 1:1 into a Flashbots bundle
 
+Incremental per-block update (no recompute)
+
+Optimal input sizing via derivative
+
+Parallel evaluation (worker threads)
+
+Flashbots bundle builder
+
+XRPL-specific AMM adaptation
+
+///
+
+Optimal input sizing (maximize profit)
+
+Incremental block updates (no full recompute)
+
+Parallel evaluation (worker_threads)
+
+Flashbots bundle builder
+
+XRPL AMM math swap-in
+
+optimal input sizing per cycle
+
+fee-aware log-edge construction
+
+batching disjoint cycles
+

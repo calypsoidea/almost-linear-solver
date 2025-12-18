@@ -1,6 +1,119 @@
 
 // dex_sim_600pools.cjs
-// import { performance } from "perf_hooks";
+
+/* 
+
+        [
+            { poolId: 2, from: 'T64', to: 'T92', rate: 0.9803358842378024 },
+            { poolId: 42, from: 'T92', to: 'T52', rate: 0.9910486071852158 },
+            { poolId: 7, from: 'T138', to: 'T52', rate: 1.0271895553849273 },
+            { poolId: 157, from: 'T138', to: 'T64', rate: 0.9756306962745209 }
+        ]
+        [
+            { poolId: 20, from: 'T29', to: 'T130', rate: 1.004090750642576 },
+            { poolId: 83, from: 'T130', to: 'T66', rate: 0.9551455974380173 },
+            { poolId: 40, from: 'T66', to: 'T29', rate: 0.9821072475168098 }
+        ]
+        [
+            { poolId: 22, from: 'T59', to: 'T43', rate: 1.0347187360396537 },
+            { poolId: 162, from: 'T59', to: 'T99', rate: 0.9930306120429028 },
+            { poolId: 281, from: 'T43', to: 'T99', rate: 1.045200428095761 }
+        ]
+        [
+            { poolId: 32, from: 'T101', to: 'T117', rate: 1.0266343215033953 },
+            { poolId: 88, from: 'T73', to: 'T101', rate: 0.9904007283709648 },
+            { poolId: 355, from: 'T73', to: 'T117', rate: 0.9540388674580527 }
+        ]
+
+        [
+
+            { poolId: 2, from: 'T64', to: 'T92', rate: 0.9803358842378024 },
+            { poolId: 298, from: 'T92', to: 'T161', rate: 0.9831953997062169 },
+            { poolId: 239, from: 'T161', to: 'T102', rate: 0.9617501417103511 },
+            { poolId: 76, from: 'T102', to: 'T52', rate: 0.9785475079485221 },
+            { poolId: 78, from: 'T52', to: 'T75', rate: 0.9645440223989994 },
+            { poolId: 14, from: 'T75', to: 'T66', rate: 0.9788994370083579 },
+            { poolId: 40, from: 'T66', to: 'T29', rate: 0.9821072475168098 },
+            { poolId: 117, from: 'T199', to: 'T29', rate: 1.0245435881552443 },
+            { poolId: 216, from: 'T71', to: 'T199', rate: 1.0444857040860134 },
+            { poolId: 412, from: 'T9', to: 'T71', rate: 1.0234598031032864 },
+            { poolId: 351, from: 'T9', to: 'T127', rate: 1.0111762548780094 },
+            { poolId: 113, from: 'T49', to: 'T127', rate: 1.0385641395740657 },
+            { poolId: 11, from: 'T57', to: 'T49', rate: 1.0048957583717635 },
+            { poolId: 108, from: 'T169', to: 'T57', rate: 1.0134351277596148 },
+            { poolId: 13, from: 'T134', to: 'T169', rate: 1.0087243305818419 },
+            { poolId: 92, from: 'T125', to: 'T134', rate: 1.0249677742461736 },
+            { poolId: 34, from: 'T56', to: 'T125', rate: 1.031814053218975 },
+            { poolId: 33, from: 'T56', to: 'T15', rate: 0.9800524600251472 },
+            { poolId: 225, from: 'T167', to: 'T15', rate: 0.9990324821449916 },
+            { poolId: 361, from: 'T167', to: 'T72', rate: 0.963264902423016 },
+            { poolId: 257, from: 'T114', to: 'T72', rate: 1.0431495205263763 },
+            { poolId: 73, from: 'T114', to: 'T179', rate: 0.9864290972692022 },
+            { poolId: 171, from: 'T179', to: 'T67', rate: 0.9713066163231848 },
+            { poolId: 63, from: 'T31', to: 'T67', rate: 1.0109233367318307 },
+            { poolId: 203, from: 'T30', to: 'T31', rate: 0.9736354851984333 },
+            { poolId: 188, from: 'T132', to: 'T30', rate: 1.0359863796918636 },
+            { poolId: 10, from: 'T74', to: 'T132', rate: 1.011288445167661 },
+            { poolId: 169, from: 'T126', to: 'T74', rate: 1.0414224633952238 },
+            { poolId: 467, from: 'T126', to: 'T107', rate: 0.9732214102276321 }
+        ]
+        [
+            { poolId: 256, from: 'T167', to: 'T187', rate: 0.9811644608865583 },
+            { poolId: 55, from: 'T187', to: 'T63', rate: 0.9595329243041464 },
+            { poolId: 1, from: 'T175', to: 'T63', rate: 1.043231110240687 },
+            { poolId: 66, from: 'T43', to: 'T175', rate: 1.0433709647879241 },
+            { poolId: 207, from: 'T167', to: 'T43', rate: 1.0081486757295537 }
+        ]
+
+        [
+            { poolId: 0, from: 'T64', to: 'T107', rate: 0.9957169494459882 },
+            { poolId: 2, from: 'T64', to: 'T92', rate: 0.9803358842378024 },
+            { poolId: 298, from: 'T92', to: 'T161', rate: 0.9831953997062169 },
+            { poolId: 239, from: 'T161', to: 'T102', rate: 0.9617501417103511 },
+            { poolId: 76, from: 'T102', to: 'T52', rate: 0.9785475079485221 },
+            { poolId: 78, from: 'T52', to: 'T75', rate: 0.9645440223989994 },
+            { poolId: 14, from: 'T75', to: 'T66', rate: 0.9788994370083579 },
+            { poolId: 40, from: 'T66', to: 'T29', rate: 0.9821072475168098 },
+            { poolId: 117, from: 'T199', to: 'T29', rate: 1.0245435881552443 },
+            { poolId: 216, from: 'T71', to: 'T199', rate: 1.0444857040860134 },
+            { poolId: 412, from: 'T9', to: 'T71', rate: 1.0234598031032864 },
+            { poolId: 351, from: 'T9', to: 'T127', rate: 1.0111762548780094 },
+            { poolId: 113, from: 'T49', to: 'T127', rate: 1.0385641395740657 },
+            { poolId: 11, from: 'T57', to: 'T49', rate: 1.0048957583717635 },
+            { poolId: 108, from: 'T169', to: 'T57', rate: 1.0134351277596148 },
+            { poolId: 13, from: 'T134', to: 'T169', rate: 1.0087243305818419 },
+            { poolId: 92, from: 'T125', to: 'T134', rate: 1.0249677742461736 },
+            { poolId: 34, from: 'T56', to: 'T125', rate: 1.031814053218975 },
+            { poolId: 33, from: 'T56', to: 'T15', rate: 0.9800524600251472 },
+            { poolId: 225, from: 'T167', to: 'T15', rate: 0.9990324821449916 },
+            { poolId: 256, from: 'T167', to: 'T187', rate: 0.9811644608865583 },
+            { poolId: 55, from: 'T187', to: 'T63', rate: 0.9595329243041464 },
+            { poolId: 1, from: 'T175', to: 'T63', rate: 1.043231110240687 },
+            { poolId: 66, from: 'T43', to: 'T175', rate: 1.0433709647879241 },
+            { poolId: 22, from: 'T59', to: 'T43', rate: 1.0347187360396537 },
+            { poolId: 480, from: 'T59', to: 'T95', rate: 0.9807979402998983 },
+            { poolId: 69, from: 'T95', to: 'T47', rate: 0.9558396969381193 },
+            { poolId: 39, from: 'T55', to: 'T47', rate: 1.0304647292154823 },
+            { poolId: 30, from: 'T124', to: 'T55', rate: 1.0020690604085676 },
+            { poolId: 47, from: 'T124', to: 'T178', rate: 1.0204991318033956 },
+            { poolId: 476, from: 'T178', to: 'T156', rate: 0.9655173783765795 },
+            { poolId: 54, from: 'T156', to: 'T77', rate: 0.987174963427071 },
+            { poolId: 586, from: 'T168', to: 'T77', rate: 1.0347702195973474 },
+            { poolId: 4, from: 'T107', to: 'T168', rate: 1.0246716365908086 }
+        ]
+
+    Benchmarks:
+
+        Generated 600+ pool network in 1.50 ms
+        Projected to cycle space in 56.92 ms
+        Interpreted cycles in 3.79 ms
+
+        Generated 600+ pool network in 1.36 ms
+        Projected to cycle space in 40.07 ms
+        Interpreted cycles in 4.13 ms
+
+*/ 
+
 const { performance } = require('perf_hooks');
 
 function log(...args) { console.log(...args); }
@@ -88,33 +201,6 @@ function extractAllCycles(edges, c, eps = 1e-12) {
 
 
 // interpretCycle from your code
-/*function interpretCycle(idToEdge, cycle, rateMap) {
-    return cycle.map(([eid, sign]) => {
-        const { u, v } = idToEdge[eid];
-
-        // Prefer natural direction
-        if (rateMap[u + "," + v] !== undefined) {
-            return {
-                poolId: eid,
-                from: sign > 0 ? u : v,
-                to:   sign > 0 ? v : u,
-                rate: rateMap[u + "," + v]
-            };
-        }
-
-        // Otherwise flip
-        if (rateMap[v + "," + u] !== undefined) {
-            return {
-                poolId: eid,
-                from: sign > 0 ? v : u,
-                to:   sign > 0 ? u : v,
-                rate: rateMap[v + "," + u]
-            };
-        }
-
-        throw new Error(`Missing rate for pool ${u}<->${v}`);
-    });
-}*/
 
 function interpretCycle(idToEdge, cycle, rateMap) {
     return cycle.map(([eid, sign]) => {
@@ -239,10 +325,6 @@ function runSimulation(){
     console.log("Generated 600+ pool network in", (t1-t0).toFixed(2),"ms");
     console.log("Projected to cycle space in", (t2-t1).toFixed(2),"ms");
 
-    // Simple cycle extraction: take non-zero edges as one cycle
-    //const cycle=[];
-    //c.forEach((v,eid)=>{if(Math.abs(v)>1e-12) cycle.push([eid,v>0?1:-1]);});
-
     const cycles = extractAllCycles(idToEdge, c);
 
     if (cycles.length === 0) {
@@ -253,7 +335,7 @@ function runSimulation(){
     const t3=performance.now();
     for (const { cycle, amt } of cycles) {
         const result = interpretCycle(idToEdge, cycle, rateMap);
-        //console.log(result);
+        console.log(result);
         //console.log("Cycle multiplier:", result.multiplier.toFixed(6));
     }
 
