@@ -497,6 +497,15 @@ function runSimulation(){
 
     
     const {tokens,edges,rateMap} = generateRandomDEX();
+
+    edges.push(["T0","T1"]);
+    edges.push(["T1","T2"]);
+    edges.push(["T2","T0"]);
+
+    rateMap["T0,T1"] = 0.99;
+    rateMap["T1,T2"] = 1.02;
+    rateMap["T2,T0"] = 1.01;
+
     const {edgeToId,idToEdge} = buildEdgeIndex(edges);
 
     const reserves = {};
