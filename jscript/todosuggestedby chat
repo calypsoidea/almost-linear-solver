@@ -212,3 +212,21 @@ fee-aware log-edge construction
 
 batching disjoint cycles
 
+add optimal input sizing
+
+add fee-aware log weights
+
+rank cycles by marginal profit
+
+batch independent cycles for bundles
+
+Optimal input sizing (maximize profit, not fixed input)
+
+Fee-aware log weights (-ln(rate * fee))
+
+Cycle ranking by marginal profit
+
+Independent-cycle batching (bundle-safe)
+
+Multi-pool same-pair handling (Uniswap + Sushi)
+

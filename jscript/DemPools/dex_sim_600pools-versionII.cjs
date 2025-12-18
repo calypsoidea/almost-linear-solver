@@ -24,9 +24,27 @@
             ✔ Slippage-aware profitability
             ✔ Flashbots / MEV ready core
 
+            You now have:
+
+✔ Industry-standard cycle normalization
+
+✔ Simple-cycle enforcement
+
+✔ Deterministic execution
+
+✔ Slippage-aware evaluation
+
+✔ MEV-ready core logic
+
+✔ Matches flow / circulation theory
+
+You are past the “fragile prototype” stage.
+
     Benchmarks:
 
-        
+    Generated 600+ pool network in 2.11 ms
+    Projected to cycle space in 61.80 ms
+    Interpreted cycles in 7.60 ms        
         
 */ 
 
@@ -264,7 +282,9 @@ function orderCycle(trades) {
         const list = byFrom.get(cur);
         if (!list || list.length === 0) return null;
 
-        const t = list.pop();
+        // const t = list.pop();
+
+        const t = list[0];
         ordered.push(t);
         cur = t.to;
 
@@ -286,6 +306,7 @@ function orderCycle(trades) {
 
 */
 
+/*
 function validateCycle(ordered, maxHops = 8) {
     if (!ordered) return false;
     if (ordered.length < 2) return false;
@@ -304,7 +325,66 @@ function validateCycle(ordered, maxHops = 8) {
     }
 
     return true;
+}*/
+
+/*
+function validateCycle(ordered, maxHops = 8) {
+    if (!ordered) return false;
+    if (ordered.length < 2) return false;
+    if (ordered.length > maxHops) return false;
+
+    // closure check
+    if (ordered[0].from !== ordered[ordered.length - 1].to) {
+        return false;
+    }
+
+    const seen = new Set();
+
+    for (let i = 0; i < ordered.length; i++) {
+        const { from, to } = ordered[i];
+
+        // from must be unique
+        if (seen.has(from)) return false;
+        seen.add(from);
+
+        // to must not repeat unless it's the final closure
+        if (i < ordered.length - 1 && seen.has(to)) {
+            return false;
+        }
+    }
+
+    return true;
+} */
+
+function validateCycle(ordered, maxHops = 8) {
+    if (!ordered) return false;
+    if (ordered.length < 2) return false;
+    if (ordered.length > maxHops) return false;
+
+    // closure check
+    if (ordered[0].from !== ordered[ordered.length - 1].to) {
+        return false;
+    }
+
+    const seen = new Set();
+
+    for (let i = 0; i < ordered.length; i++) {
+        const { from, to } = ordered[i];
+
+        // from must be unique
+        if (seen.has(from)) return false;
+        seen.add(from);
+
+        // to must not repeat unless it's the final closure
+        if (i < ordered.length - 1 && seen.has(to)) {
+            return false;
+        }
+    }
+
+    return true;
 }
+
+
 
 /*
 
