@@ -306,18 +306,20 @@ function findOptimalInput({
    MAIN — HARD CODED TEST
 ============================================================ */
 
-function run(preferredToken = "A") {  // Add param, default to "A" for testing
+function run(preferredToken = "WETH") {  // Add param, default to "A" for testing
     const t0=performance.now();
-    const edges = [["A","B"],["B","C"],["C","A"]];
+    const edges = [["USDT","WETH"],["WETH","BRL"],
+                    ["BRL","HSK"],["HSK","USDT"]];
 
     const { idToEdge } = buildEdgeIndex(edges);
     const t1=performance.now();
 
     // Pools with reserves ONLY (truth source) 
     const pools = { 
-        0: { token0:"A", token1:"B", reserve0:1e6, reserve1:1e6 }, 
-        1: { token0:"B", token1:"C", reserve0:1e6, reserve1:1e6 }, 
-        2: { token0:"C", token1:"A", reserve0:1.5e6, reserve1:1e6 }  
+        0: { token0:"USDT", token1:"WETH", reserve0:1e6, reserve1:3e6 }, 
+        1: { token0:"WETH", token1:"BRL", reserve0:2e6, reserve1:5e6 },
+        2: { token0:"BRL", token1:"HSK", reserve0:1e6, reserve1:5e6 },
+        3: { token0:"HSK", token1:"USDT", reserve0:1e6, reserve1:2e6 }  
     };
 
     // infinitesimal rates ONLY for cycle detection
@@ -418,4 +420,4 @@ function run(preferredToken = "A") {  // Add param, default to "A" for testing
     }
 }
 
-run("C")
+run()
