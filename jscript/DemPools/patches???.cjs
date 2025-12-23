@@ -53,6 +53,8 @@ function computeCycleMultiplier(cycle, pools) {
 // EXECUTION TRACE (SLIPPAGE AWARE)
 // =======================
 
+// what does it do?
+
 function executeCycle(cycle, pools, inputAmount) {
     let amt = inputAmount;
     const hops = [];

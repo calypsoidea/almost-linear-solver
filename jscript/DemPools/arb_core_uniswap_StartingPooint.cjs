@@ -317,7 +317,7 @@ function run(preferredToken = "WETH") {  // Add param, default to "A" for testin
     // Pools with reserves ONLY (truth source) 
     const pools = { 
         0: { token0:"USDT", token1:"WETH", reserve0:1e6, reserve1:3e6 }, 
-        1: { token0:"WETH", token1:"BRL", reserve0:2e6, reserve1:5e6 },
+        1: { token0:"WETH", token1:"BRL", reserve1:5e6, reserve0:2e6 },
         2: { token0:"BRL", token1:"HSK", reserve0:1e6, reserve1:5e6 },
         3: { token0:"HSK", token1:"USDT", reserve0:1e6, reserve1:2e6 }  
     };
@@ -420,4 +420,4 @@ function run(preferredToken = "WETH") {  // Add param, default to "A" for testin
     }
 }
 
-run()
+run("USDT")
