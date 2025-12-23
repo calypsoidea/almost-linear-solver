@@ -256,3 +256,17 @@ EVM execution cost is subtracted -> ?? gas?
 tx size is considered -> ??
 
 update calculations
+
+add liquidity-bounded max input
+
+add gas-aware pruning
+
+add per-hop reserve mutation (stress test mode), with investment cap
+
+or add debug prints of k before/after each hop
+
+Current bot:
+“Can this arbitrage exist in AMM math?”
+
+Mutation mode:
+“Will this arbitrage survive reality being hostile?”

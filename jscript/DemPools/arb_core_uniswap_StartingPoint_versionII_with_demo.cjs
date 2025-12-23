@@ -390,13 +390,6 @@ function run(preferredToken = null) {
             }
         }
         
-        /*console.log(
-            "Direction auto-selected:",
-            bestOrdered[0].from,
-            "start\n"
-          );*/
-          
-
         if (optimalProfit <= 0) continue;
 
         function cycleKey(ordered) {
@@ -444,4 +437,4 @@ function run(preferredToken = null) {
     }
 }
 
-run();  // Use run("T042") to filter by token
+run("HSK");  // Use run("T042") to filter by token

@@ -485,4 +485,4 @@ function run(preferredToken = null) {  // Add param, default to "A" for testing
     }
 }
 
-run("WETH")
+run("USDT")
