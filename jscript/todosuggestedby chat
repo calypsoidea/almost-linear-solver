@@ -334,3 +334,48 @@ Flashbots bundle wrapper
 capital allocation across multiple cycles
 
 search for max hops
+
+=================
+
+What I recommend next (natural progression)
+
+Add simulateCycleWithMutation
+
+Re-optimize input size under mutation
+
+Add per-hop amountOutMin
+
+Add bundle-level failure safety
+
+Only then generate Flashbots bundle
+
+If you want, next I can:
+
+refactor your current sim to mutation-aware
+
+show how to generate real router calldata
+
+explain how pro bots choose slippage margins
+
+or show how this ties into backrunning vs atomic arbs
+
+Just tell me which direction you want to go.
+
+============
+
+graph math
+ → gauge fix
+ → cycle extraction
+ → cycle strength threshold      ✅ (you’re adding this)
+ → order / validate
+ → liquidity bound
+ → optimal sizing
+ → direction selection
+ → reserve mutation validation   ✅
+ → dedup
+ → logging
+
+
+// run against real data
+
+Replace ternary search with slippage-aware Newton
