@@ -270,3 +270,67 @@ Current bot:
 
 Mutation mode:
 “Will this arbitrage survive reality being hostile?”
+
+
+============================
+
+Patch 1 — Gauge fixing (important)
+CG solves B Bᵀ y = Bg, but B Bᵀ has a nullspace (constant vector).
+
+You should fix the gauge explicitly to avoid drift:
+
+y[0] = 0;
+
+
+Right after CG returns.
+
+This improves numerical stability, especially at scale.
+
+Patch 2 — Threshold cycle coefficients
+
+You already do this partially, but I’d make it explicit after projection:
+
+for (let i = 0; i < c.length; i++) {
+  if (Math.abs(c[i]) < 1e-9) c[i] = 0;
+}
+
+
+This avoids phantom cycles.
+
+🔧 Patch 3 — Reserve mutation safety
+
+simulateCycle currently does not mutate reserves, which is correct for simulation.
+
+But be explicit in comments that:
+
+detection math ≠ execution math
+
+real execution would clone & mutate
+
+This avoids future footguns.
+
+🔧 Patch 4 — Cap max input by liquidity (later)
+
+Right now:
+
+maxIn = 100_000
+
+
+Later you’ll want:
+
+maxIn ≤ 0.2 * min(reserveIn per hop)
+
+
+But this is optional at this stage.
+
+If you want, next steps can be:
+
+incremental pool updates
+
+gas-aware invalidation
+
+Flashbots bundle wrapper
+
+capital allocation across multiple cycles
+
+search for max hops

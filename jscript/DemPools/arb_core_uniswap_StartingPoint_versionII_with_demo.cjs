@@ -188,7 +188,7 @@ function orderCycle(trades) {
     return ordered.length === trades.length ? ordered : null;
 }
 
-function validateCycle(ordered, maxHops = 8) {
+function validateCycle(ordered, maxHops = 6) {
     if (!ordered || ordered.length < 2 || ordered.length > maxHops) return false;
     if (ordered[0].from !== ordered.at(-1).to) return false;
 
@@ -329,7 +329,7 @@ function generateLargeSimulatedPools(numPools = 650, seed = null) {
 
 function run(preferredToken = null) {
     const t0 = performance.now();
-
+/*
     const edges = [["USDT","WETH"],["WETH","BRL"],
                     ["BRL","HSK"],["HSK","USDT"]];
 
@@ -340,8 +340,8 @@ function run(preferredToken = null) {
         2: { token0:"BRL", token1:"HSK", reserve0:1e6, reserve1:5e6 },
         3: { token0:"HSK", token1:"USDT", reserve0:1e6, reserve1:2e6 }  
     }; 
-
-    //const { edges, pools } = generateLargeSimulatedPools(200, 12345);
+    */
+    const { edges, pools } = generateLargeSimulatedPools(200, 12345);
 
     const { idToEdge } = buildEdgeIndex(edges);
     const t1 = performance.now();
@@ -437,4 +437,4 @@ function run(preferredToken = null) {
     }
 }
 
-run("HSK");  // Use run("T042") to filter by token
+run();  // Use run("T042") to filter by token
