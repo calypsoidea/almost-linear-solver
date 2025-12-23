@@ -188,7 +188,7 @@ function orderCycle(trades) {
     return ordered.length === trades.length ? ordered : null;
 }
 
-function validateCycle(ordered, maxHops = 6) {
+function validateCycle(ordered, maxHops = 8) {
     if (!ordered || ordered.length < 2 || ordered.length > maxHops) return false;
     if (ordered[0].from !== ordered.at(-1).to) return false;
 
@@ -330,7 +330,18 @@ function generateLargeSimulatedPools(numPools = 650, seed = null) {
 function run(preferredToken = null) {
     const t0 = performance.now();
 
-    const { edges, pools } = generateLargeSimulatedPools(200, 12345);
+    const edges = [["USDT","WETH"],["WETH","BRL"],
+                    ["BRL","HSK"],["HSK","USDT"]];
+
+                     // Pools with reserves ONLY (truth source) 
+    const pools = { 
+        0: { token0:"USDT", token1:"WETH", reserve0:1e6, reserve1:3e6 }, 
+        1: { token0:"WETH", token1:"BRL", reserve1:5e6, reserve0:2e6 },
+        2: { token0:"BRL", token1:"HSK", reserve0:1e6, reserve1:5e6 },
+        3: { token0:"HSK", token1:"USDT", reserve0:1e6, reserve1:2e6 }  
+    }; 
+
+    //const { edges, pools } = generateLargeSimulatedPools(200, 12345);
 
     const { idToEdge } = buildEdgeIndex(edges);
     const t1 = performance.now();
@@ -347,8 +358,8 @@ function run(preferredToken = null) {
     const cycles = extractAllCycles(idToEdge, c);
     const t3 = performance.now();
 
-    console.log(`Detected ${cycles.length} raw cycle(s) in large graph`);
-    console.log(`Cycle detection time: ${(t3 - t1).toFixed(2)} ms\n`);
+    //console.log(`Detected ${cycles.length} raw cycle(s) in large graph`);
+    //console.log(`Cycle detection time: ${(t3 - t1).toFixed(2)} ms\n`);
 
     const seenCycles = new Set();
 
@@ -378,6 +389,13 @@ function run(preferredToken = null) {
                 bestTrace = simulateCycle(reversed, pools, optimalInput).trace;
             }
         }
+        
+        /*console.log(
+            "Direction auto-selected:",
+            bestOrdered[0].from,
+            "start\n"
+          );*/
+          
 
         if (optimalProfit <= 0) continue;
 
@@ -412,6 +430,13 @@ function run(preferredToken = null) {
         console.log("OPTIMAL INPUT:", optimalInput.toFixed(0));
         console.log("OPTIMAL PROFIT:", optimalProfit.toFixed(2));
         console.log("Total time:", (t4 - t0).toFixed(2), "ms\n");
+
+        console.log(
+            "Direction auto-selected:",
+            bestOrdered[0].from,
+            "start\n"
+          )
+
     }
 
     if (seenCycles.size === 0) {

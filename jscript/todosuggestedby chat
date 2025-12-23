@@ -230,3 +230,29 @@ Independent-cycle batching (bundle-safe)
 
 Multi-pool same-pair handling (Uniswap + Sushi)
 
+
+
+======================
+
+add a gas feasibility layer -> very important
+
+model per-hop calldata cost
+
+integrate EIP-1559 base/priority fee
+
+add gas-aware dominance pruning
+
+check for block competition
+check for  inclusion probability
+
+❌ Flashbots
+❌ Profit-per-block stats
+
+
+hop count is penalized -> ??
+
+EVM execution cost is subtracted -> ?? gas?
+
+tx size is considered -> ??
+
+update calculations

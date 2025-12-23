@@ -226,7 +226,7 @@ function orderCycle(trades) {
     return ordered.length === trades.length ? ordered : null;
 }
 
-function validateCycle(ordered, maxHops = 6) {
+function validateCycle(ordered, maxHops = 8) {
     if (!ordered || ordered.length < 2 || ordered.length > maxHops) return false;
     if (ordered[0].from !== ordered.at(-1).to) return false;
 
@@ -301,26 +301,91 @@ function findOptimalInput({
     };
 }
 
+/////////////////////
+
+/**
+ * Generate a large simulated dataset with 600+ pools
+ */
+function generateLargeSimulatedPools(numPools = 650, seed = null) {
+    if (seed !== null) {
+        let s = seed;
+        Math.random = () => {
+            s = (s * 16807) % 2147483647;
+            return s / 2147483647;
+        };
+    }
+
+    const tokenCount = Math.max(200, Math.floor(numPools * 0.45));
+    const tokens = Array.from({ length: tokenCount }, (_, i) => `T${String(i).padStart(3, '0')}`);
+
+    const edges = [];
+    const pools = {};
+    const usedPairs = new Set();
+    let poolId = 0;
+
+    while (poolId < numPools) {
+        let idx1 = Math.floor(Math.random() * tokenCount);
+        let idx2 = Math.floor(Math.random() * tokenCount);
+        while (idx1 === idx2) idx2 = Math.floor(Math.random() * tokenCount);
+
+        const token0 = tokens[idx1];
+        const token1 = tokens[idx2];
+        const sortedPair = token0 < token1 ? [token0, token1] : [token1, token0];
+        const pairKey = sortedPair.join(',');
+
+        if (usedPairs.has(pairKey)) continue;
+
+        usedPairs.add(pairKey);
+        edges.push(sortedPair);
+
+        const baseReserve = 1e4 + Math.random() * 9.99e6;
+        const hasImbalance = Math.random() < 0.05;
+        const imbalanceFactor = hasImbalance
+            ? 0.4 + Math.random() * 2.2
+            : 0.9 + Math.random() * 0.2;
+
+        const reserve0 = baseReserve;
+        const reserve1 = baseReserve * imbalanceFactor;
+
+        pools[poolId] = {
+            token0: sortedPair[0],
+            token1: sortedPair[1],
+            reserve0,
+            reserve1
+        };
+
+        poolId++;
+    }
+
+    console.log(`\nGenerated ${poolId} pools across ${tokens.length} tokens`);
+    console.log(`≈ ${Math.round(poolId * 0.05)} pools have strong imbalances → expect multiple arbs\n`);
+
+    return { tokens, edges, pools };
+}
+
+
 
 /* ============================================================
    MAIN — HARD CODED TEST
 ============================================================ */
 
-function run(preferredToken = "WETH") {  // Add param, default to "A" for testing
+function run(preferredToken = null) {  // Add param, default to "A" for testing
     const t0=performance.now();
     const edges = [["USDT","WETH"],["WETH","BRL"],
                     ["BRL","HSK"],["HSK","USDT"]];
 
-    const { idToEdge } = buildEdgeIndex(edges);
-    const t1=performance.now();
-
-    // Pools with reserves ONLY (truth source) 
+                     // Pools with reserves ONLY (truth source) 
     const pools = { 
         0: { token0:"USDT", token1:"WETH", reserve0:1e6, reserve1:3e6 }, 
         1: { token0:"WETH", token1:"BRL", reserve1:5e6, reserve0:2e6 },
         2: { token0:"BRL", token1:"HSK", reserve0:1e6, reserve1:5e6 },
         3: { token0:"HSK", token1:"USDT", reserve0:1e6, reserve1:2e6 }  
-    };
+    }; 
+
+    //const { edges, pools } = generateLargeSimulatedPools(200, 12345);
+
+    const { idToEdge } = buildEdgeIndex(edges);
+    const t1=performance.now();
 
     // infinitesimal rates ONLY for cycle detection
     const g = idToEdge.map(([u,v], i) => {
@@ -420,4 +485,4 @@ function run(preferredToken = "WETH") {  // Add param, default to "A" for testin
     }
 }
 
-run("USDT")
+run("WETH")

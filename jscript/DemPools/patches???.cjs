@@ -155,6 +155,33 @@ const cycle = [
     { poolId: "CA", from: "C", to: "A" }
 ];
 
+
+// gas calculation
+
+/*
+
+    if (!gasBreakEven({
+        optimalProfit,
+        gasUnits: 160_000 + 40_000 * ordered.length,
+        gasPriceWei: currentGasPrice,
+        tokenPriceEth: priceOracle[preferredToken]
+    })) continue;
+
+*/
+
+function gasBreakEven({
+    optimalProfit,
+    gasUnits,
+    gasPriceWei,
+    tokenPriceEth
+}) {
+    const gasCostEth = gasUnits * gasPriceWei;
+    const profitEth = optimalProfit * tokenPriceEth;
+    return profitEth > gasCostEth;
+}
+
+
+
 // =======================
 // RUN
 // =======================
